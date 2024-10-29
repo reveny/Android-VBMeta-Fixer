@@ -1,5 +1,5 @@
 # Android-VBMeta-Fixer
-A Magisk/KernelSU/Apatch module and app to fix VBMeta detections on Android. <br>
+A Magisk/KernelSU/Apatch module to fix VBMeta detections on Android. <br>
 It works by performing **key attestation** and setting the system property `ro.boot.vbmeta.digest` to the verified boot hash result.
 
 ## Features
