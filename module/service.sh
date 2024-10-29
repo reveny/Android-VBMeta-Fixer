@@ -5,7 +5,15 @@ until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 1
 done
 
-sleep 10
+# Wait until we are in the launcher
+while true; do
+    current_focus=$(dumpsys window | grep -E "mCurrentFocus")
+    if echo "$current_focus" | grep -q "launcher"; then
+        break
+    else
+        sleep 1
+    fi
+done
 
 # Run the service
 am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService

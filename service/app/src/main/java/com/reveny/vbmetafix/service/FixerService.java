@@ -2,7 +2,6 @@ package com.reveny.vbmetafix.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -22,7 +21,7 @@ public class FixerService extends Service {
         Log.d(TAG, "Service Created");
     }
 
-    public void writeBootHashToFile(Context context, String bootHash) {
+    public void writeBootHashToFile(String bootHash) {
         @SuppressLint("SdCardPath") File file = new File("/data/data/com.reveny.vbmetafix.service/cache/boot.hash");
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(bootHash.getBytes());
@@ -39,7 +38,7 @@ public class FixerService extends Service {
         String bootHash = Entry.run();
         Log.e(TAG, "Boot hash: " + bootHash);
 
-        writeBootHashToFile(this, bootHash);
+        writeBootHashToFile(bootHash);
 
         stopForeground(true);
         stopSelf();
