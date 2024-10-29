@@ -7,7 +7,8 @@ It works by performing **key attestation** and setting the system property `ro.b
 - Sets the `ro.boot.vbmeta.digest` system property to the verified boot hash
 
 ## Limitations
-Please note that this tool currently **does not verify** if `vbmeta` should be set, so there may be issues depending on your device configuration.
+- Please note that this tool currently **does not verify** if `vbmeta` should be set, so there may be issues depending on your device configuration.
+- This tool may not work on devices with broken TEE.
 
 ## Key Attestation Credit
 This tool uses key attestation code from [Key Attestation by vvb2060](https://github.com/vvb2060/KeyAttestation).
