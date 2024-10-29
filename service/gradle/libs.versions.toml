@@ -1,0 +1,10 @@
+[versions]
+agp = "8.7.0"
+bcprovJdk18on = "1.77"
+
+[libraries]
+bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bcprovJdk18on" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+

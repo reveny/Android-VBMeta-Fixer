@@ -1,0 +1,6 @@
+id=vbmeta-fixer
+name=VBMeta Fixer
+version=1.0
+versionCode=10
+author=Reveny
+description=Reset the VBMeta digest property with the correct boot hash to fix detection
