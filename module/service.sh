@@ -8,7 +8,7 @@ done
 # Wait until we are in the launcher
 while true; do
     current_focus=$(dumpsys window | grep -E "mCurrentFocus")
-    if echo "$current_focus" | grep -q "launcher"; then
+    if echo "$current_focus" | grep -q "launcher|lawnchair"; then
         break
     else
         sleep 1
@@ -27,7 +27,8 @@ counter=0
 while [ $counter -lt $timeout ]; do
     if [ -f "$BOOT_HASH_FILE" ]; then
         boot_hash=$(cat "$BOOT_HASH_FILE")
-        resetprop ro.boot.vbmeta.digest $boot_hash
+        resetprop ro.boot.vbmeta.digest $boot_hash   
+        echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Service Active ✅" >> $MODPATH/module.prop
         break
     else
         sleep 1

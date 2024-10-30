@@ -26,11 +26,7 @@ if pm list packages | grep -q "com.reveny.vbmetafix.service"; then
     # Set status to active
     sed -i '/description/d' $MODPATH/module.prop
 
-    if [ -w /system/etc/hosts ]; then
-        echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Active ✅" >> $MODPATH/module.prop
-    else
-        echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Failed ❌" >> $MODPATH/module.prop
-    fi
+    echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Active ✅" >> $MODPATH/module.prop
 else
     ui_print "- Install failed. Package not found after installation attempt."
 	echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Failed ❌" >> $MODPATH/module.prop
