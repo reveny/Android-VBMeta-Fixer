@@ -40,7 +40,7 @@ public class FixerService extends Service {
 
         writeBootHashToFile(bootHash);
 
-        stopForeground(true);
+        stopForeground(Service.STOP_FOREGROUND_DETACH);
         stopSelf();
 
         return START_STICKY;
