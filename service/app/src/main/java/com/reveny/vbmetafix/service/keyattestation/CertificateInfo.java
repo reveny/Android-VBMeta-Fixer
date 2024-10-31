@@ -232,8 +232,9 @@ public class CertificateInfo {
         return newList;
     }
 
+    @SuppressWarnings("unchecked")
     public static AttestationResult parseCertificateChain(CertPath certPath) throws Exception {
-        // noinspection unchecked
+        //noinspection unchecked
         var certs = (List<X509Certificate>) certPath.getCertificates();
         if (certs.isEmpty()) {
             throw new CertificateParsingException("No certificate found");

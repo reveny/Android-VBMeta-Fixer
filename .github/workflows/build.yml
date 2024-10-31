@@ -1,0 +1,79 @@
+name: Build
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build.yml'
+      - 'service/**'
+  workflow_dispatch:
+    inputs:
+      module:
+        description: 'Make module'
+        type: boolean
+        required: true
+        default: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Set environments
+        run: |
+          {
+            echo "apk_version=v$(grep -oP 'versionName \"\K[^\"]+' service/app/build.gradle)"
+            echo "mod_version=v$(awk -F= '/^version=/ {print $2}' module/module.prop)"
+          } >> $GITHUB_ENV
+
+      - name: Build with Gradle
+        working-directory: service
+        run: |
+          ./gradlew assembleDebug
+          cp -f app/build/outputs/apk/debug/app-debug.apk ../module/service/service.apk
+
+      - name: Upload APK
+        if: github.event.inputs.module != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: VBMetaFixerService-${{ env.apk_version }}
+          path: module/service/service.apk
+
+      - name: Make module
+        if: github.event.inputs.module == 'true'
+        working-directory: module
+        run: |
+          rm -f service/.gitkeep
+          zip vbmeta-fixer-${{ env.mod_version }}.zip -r *
+
+#      - name: Upload module
+#        if: github.event.inputs.module == 'true'
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: vbmeta-fixer-${{ env.mod_version }}
+#          path: module/vbmeta-fixer-${{ env.mod_version }}.zip
+
+      - name: Release module
+        uses: softprops/action-gh-release@v2
+        if: github.event.inputs.module == 'true'
+        with:
+          tag_name: ${{ env.mod_version }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          make_latest: true
+          files: module/vbmeta-fixer-${{ env.mod_version }}.zip
