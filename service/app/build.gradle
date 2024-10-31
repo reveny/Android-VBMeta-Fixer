@@ -7,21 +7,22 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.reveny.vbmetafix.service"
         minSdk 24
         targetSdk 34
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        proguardFiles += 'proguard-rules.pro'
     }
 
     buildTypes {
-        release {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        configureEach  {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
