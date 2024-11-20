@@ -14,8 +14,8 @@ while true; do
     fi
 done
 
-# delay for 5 seconds
-sleep 5
+# Delay for 10 seconds which is hopefully enough
+sleep 10
 
 # Run the service
 am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService
@@ -31,7 +31,10 @@ counter=0
 while [ $counter -lt $timeout ]; do
     if [ -f "$BOOT_HASH_FILE" ]; then
         boot_hash=$(cat "$BOOT_HASH_FILE")
-        resetprop ro.boot.vbmeta.digest $boot_hash   
+        if [ "$boot_hash" == "null" ]; then
+            boot_hash=""
+        fi
+        resetprop ro.boot.vbmeta.digest $boot_hash
         
         echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Service Active ✅" >> $MODPATH/module.prop
         echo "vbmeta-fixer: service.sh - service active" >> /dev/kmsg
