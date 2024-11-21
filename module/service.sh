@@ -18,14 +18,14 @@ done
 sleep 10
 
 # Run the service
-am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService
+am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0
 
 echo "vbmeta-fixer: service.sh - service started" >> /dev/kmsg
 
 # Define paths
 BOOT_HASH_FILE="/data/data/com.reveny.vbmetafix.service/cache/boot.hash"
 TARGET="/data/adb/tricky_store/target.txt"
-timeout=5
+timeout=10
 counter=0
 
 # Attempt to read the boot hash file until it's available or timeout is reached
@@ -52,6 +52,9 @@ while [ $counter -lt $timeout ]; do
         break
     else
         sleep 1
+        if [ -d "/data/data/com.reveny.vbmetafix.service/cache" ]; then
+        am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0
+        fi
         counter=$((counter + 1))
     fi
 done
