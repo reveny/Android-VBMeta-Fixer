@@ -32,8 +32,15 @@ while [ $counter -lt $timeout ]; do
     if [ -f "$BOOT_HASH_FILE" ]; then
         boot_hash=$(cat "$BOOT_HASH_FILE")
         if [ "$boot_hash" == "null" ]; then
-            boot_hash=""
-        fi
+        # Check if /data/adb/tricky_store/target.txt exists and contains the service.
+        if [ -f /data/adb/tricky_store/target.txt ]; then
+    if ! grep -q "com.reveny.vbmetafix.service" /data/adb/tricky_store/target.txt; then
+        echo "com.reveny.vbmetafix.service" >> /data/adb/tricky_store/target.txt
+        sleep 5
+        am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService
+    else
+        boot_hash=""
+    fi
         resetprop ro.boot.vbmeta.digest $boot_hash
         
         echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Service Active ✅" >> $MODPATH/module.prop
