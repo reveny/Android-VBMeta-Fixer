@@ -35,6 +35,7 @@ fi
 # Check if /data/adb/tricky_store/target.txt exists and contains the service.
 if [ -f /data/adb/tricky_store/target.txt ]; then
     if ! grep -q "com.reveny.vbmetafix.service" /data/adb/tricky_store/target.txt; then
+        sed -i -e ':a' -e '/^\n*$/{$d;N;};/\n$/ba' /data/adb/tricky_store/target.txt;
         echo "com.reveny.vbmetafix.service" >> /data/adb/tricky_store/target.txt
         ui_print "- service added to target.txt"
     else
