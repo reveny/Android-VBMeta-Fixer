@@ -22,7 +22,7 @@ am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService
 
 echo "vbmeta-fixer: service.sh - service started" >> /dev/kmsg
 
-# Define the boot hash file path
+# Define paths
 BOOT_HASH_FILE="/data/data/com.reveny.vbmetafix.service/cache/boot.hash"
 TARGET="/data/adb/tricky_store/target.txt"
 timeout=5
@@ -32,23 +32,22 @@ counter=0
 while [ $counter -lt $timeout ]; do
     if [ -f "$BOOT_HASH_FILE" ]; then
         boot_hash=$(cat "$BOOT_HASH_FILE")
-        if [ "$boot_hash" == "null" ]; then
-        # Check if /data/adb/tricky_store/target.txt exists and contains the service.
-        if [ -f "$TARGET" ]; then
-        svcheck=$(cat "$TARGET" | grep -q "com.reveny.vbmetafix.service" )
-        if [ "$svcheck" != "thecom.reveny.vbmetafix.service" ]; then
-        sed -i -e ':a' -e '/^\n*$/{$d;N;};/\n$/ba' "$TARGET";
-        echo "com.reveny.vbmetafix.service" >> "$TARGET"
-        sleep 1
-        am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService
-        sleep 1
-        boot_hash=$(cat "$BOOT_HASH_FILE")
+        if [ "$boot_hash" = "null" ]; then
+            # Check if the target file contains the service
+            if [ -f "$TARGET" ]; then
+                if ! grep -q "com.reveny.vbmetafix.service" "$TARGET"; then
+                    sed -i -e ':a' -e '/^\n*$/{$d;N;};/\n$/ba' "$TARGET"
+                    echo "com.reveny.vbmetafix.service" >> "$TARGET"
+                    sleep 1
+                    am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService
+                    sleep 1
+                    boot_hash=$(cat "$BOOT_HASH_FILE")
+                fi
+            fi
         fi
-        fi
-        fi
-        resetprop ro.boot.vbmeta.digest $boot_hash
+        resetprop ro.boot.vbmeta.digest "$boot_hash"
         
-        echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Service Active ✅" >> $MODPATH/module.prop
+        echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection.\nStatus: Service Active ✅" >> "$MODPATH/module.prop"
         echo "vbmeta-fixer: service.sh - service active" >> /dev/kmsg
         break
     else
@@ -59,5 +58,6 @@ done
 
 # Print fail message if the boot hash file was not read within 5 seconds
 if [ $counter -ge $timeout ]; then
-    echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Failed ❌" >> $MODPATH/module.prop
+    echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection.\nStatus: Failed ❌" >> "$MODPATH/module.prop"
+    echo "vbmeta-fixer: service.sh - failed to reset VBMeta digest within timeout" >> /dev/kmsg
 fi
