@@ -16,7 +16,8 @@ done
 
 # Delay for 10 seconds which is hopefully enough
 sleep 10
-
+# Remove old to prevent getting applied if generation failed.
+rm -rf $BOOT_HASH_FILE
 # Run the service
 am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0
 
