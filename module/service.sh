@@ -19,7 +19,7 @@ sleep 10
 # Remove old to prevent getting applied if generation failed.
 rm -rf $BOOT_HASH_FILE
 # Run the service
-am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0
+am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
 
 echo "vbmeta-fixer: service.sh - service started" >> /dev/kmsg
 
@@ -40,9 +40,12 @@ while [ $counter -lt $timeout ]; do
                     sed -i -e ':a' -e '/^\n*$/{$d;N;};/\n$/ba' "$TARGET"
                     echo "com.reveny.vbmetafix.service" >> "$TARGET"
                     sleep 1
-                    am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService
+                    am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
                     sleep 1
                     boot_hash=$(cat "$BOOT_HASH_FILE")
+                    if [ "$boot_hash" = "null" ]; then
+                    boot_hash=""
+                    fi
                 fi
             fi
         fi
@@ -54,7 +57,7 @@ while [ $counter -lt $timeout ]; do
     else
         sleep 1
         if [ -d "/data/data/com.reveny.vbmetafix.service/cache" ]; then
-        am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0
+        am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
         fi
         counter=$((counter + 1))
     fi
