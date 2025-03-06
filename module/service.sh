@@ -48,6 +48,9 @@ while [ $counter -lt $timeout ]; do
 
         vbmeta_size=$(blockdev --getbs $(echo -n "/dev/block/by-name/vbmeta"$(getprop ro.boot.slot_suffix)))
         resetprop ro.boot.vbmeta.size "$vbmeta_size"
+
+        resetprop ro.boot.vbmeta.invalidate_on_error "yes"
+        resetprop ro.boot.vbmeta.device_state "locked"
         
         echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection.\nStatus: Service Active ✅" >> "$MODPATH/module.prop"
         echo "vbmeta-fixer: service.sh - service active" >> /dev/kmsg
