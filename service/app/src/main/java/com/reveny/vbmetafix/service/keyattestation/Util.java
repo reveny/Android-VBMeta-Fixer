@@ -11,6 +11,6 @@ public class Util {
             hexString.append(hex);
         }
 
-        return hexString.toString().toUpperCase();
+        return hexString.toString();
     }
 }
