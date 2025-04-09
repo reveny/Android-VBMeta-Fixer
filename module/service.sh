@@ -46,7 +46,7 @@ while [ $counter -lt $timeout ]; do
         resetprop ro.boot.vbmeta.digest "$boot_hash"
         resetprop ro.boot.vbmeta.hash_alg "sha256"
 
-        vbmeta_size=$(blockdev --getbs $(echo -n "/dev/block/by-name/vbmeta"$(getprop ro.boot.slot_suffix)))
+        vbmeta_size=$(/bin/toybox blockdev --getbs $(echo -n "/dev/block/by-name/vbmeta"$(getprop ro.boot.slot_suffix)))
         resetprop ro.boot.vbmeta.size "$vbmeta_size"
 
         resetprop ro.boot.vbmeta.invalidate_on_error "yes"
