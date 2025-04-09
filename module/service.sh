@@ -44,6 +44,14 @@ while [ $counter -lt $timeout ]; do
             boot_hash=""
         fi
         resetprop ro.boot.vbmeta.digest "$boot_hash"
+        resetprop ro.boot.vbmeta.hash_alg "sha256"
+        resetprop ro.boot.vbmeta.avb_version 1.0
+
+        vbmeta_size=$(/bin/toybox blockdev --getbs $(echo -n "/dev/block/by-name/vbmeta"$(getprop ro.boot.slot_suffix)))
+        resetprop ro.boot.vbmeta.size "$vbmeta_size"
+
+        resetprop ro.boot.vbmeta.invalidate_on_error "yes"
+        resetprop ro.boot.vbmeta.device_state "locked"
         
         echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection.\nStatus: Service Active ✅" >> "$MODPATH/module.prop"
         echo "vbmeta-fixer: service.sh - service active" >> /dev/kmsg
