@@ -26,7 +26,7 @@ if pm list packages | grep -q "com.reveny.vbmetafix.service"; then
     # Set status to active
     sed -i '/description/d' $MODPATH/module.prop
 
-    echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Active ✅" >> $MODPATH/module.prop
+    echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Installed ✅" >> $MODPATH/module.prop
 else
     ui_print "- Install failed. Package not found after installation attempt."
     echo "description=Reset the VBMeta digest property with the correct boot hash to fix detection. \nStatus: Failed ❌" >> $MODPATH/module.prop
@@ -37,9 +37,9 @@ if [ -f /data/adb/tricky_store/target.txt ]; then
     if ! grep -q "com.reveny.vbmetafix.service" /data/adb/tricky_store/target.txt; then
         sed -i -e ':a' -e '/^\n*$/{$d;N;};/\n$/ba' /data/adb/tricky_store/target.txt;
         echo "com.reveny.vbmetafix.service" >> /data/adb/tricky_store/target.txt
-        ui_print "- service added to target.txt"
+        ui_print "- Service added to target.txt"
     else
-        ui_print "- service exists in target.txt"
+        ui_print "- Service exists in target.txt"
     fi
 else
     echo "com.reveny.vbmetafix.service" > /data/adb/tricky_store/target.txt
