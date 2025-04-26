@@ -2,6 +2,11 @@
 A Magisk/KernelSU/Apatch module to fix VBMeta detections on Android. <br>
 It works by performing **key attestation** and setting the system property `ro.boot.vbmeta.digest` to the verified boot hash result.
 
+[![Stars](https://img.shields.io/github/stars/reveny/Android-VBMeta-Fixer?label=Stars)](https://github.com/reveny)
+[![Release](https://img.shields.io/github/v/release/reveny/Android-VBMeta-Fixer?label=Release&logo=github)](https://github.com/reveny/Android-VBMeta-Fixer/releases/latest)
+[![Download](https://img.shields.io/github/downloads/reveny/Android-VBMeta-Fixer/total?label=Downloads&logo=github)](https://github.com/reveny/Android-VBMeta-Fixer/releases/)
+[![Channel](https://img.shields.io/badge/Telegram-Channel-blue.svg?logo=telegram)](https://t.me/reveny1)
+
 ## Features
 - Utilizes key attestation to generate a verified boot hash
 - Sets the `ro.boot.vbmeta.digest` system property to the verified boot hash
@@ -28,4 +33,4 @@ Website: [My Website](https://reveny.me) <br>
 Email: [contact@reveny.me](mailto:contact@reveny.me) <br>
 
 ## License
-This project is licensed under the GPLv3 License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

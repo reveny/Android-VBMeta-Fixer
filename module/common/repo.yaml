@@ -1,0 +1,12 @@
+readme: https://raw.githubusercontent.com/reveny/Android-VBMeta-Fixer/refs/heads/main/README.md
+categories:
+  - Spoof
+  - Hiding
+note:
+  title: Limitations
+  message: |-
+    - Please note that this tool currently **does not verify** if `vbmeta` should be set, so there may be issues depending on your device configuration.
+    - This tool may not work on devices with broken TEE.
+license: GPLv3
+support: https://github.com/reveny/Android-VBMeta-Fixer/issues
+homepage: https://reveny.me
