@@ -75,7 +75,8 @@ else
     echo "vbmeta-fixer: service.sh - created target.txt" >> /dev/kmsg
 fi
 
-am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
+am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService &>/dev/null
+
 echo "vbmeta-fixer: service.sh - service started" >> /dev/kmsg
 update_status "Service started, waiting for hash file" "⏳"
 
