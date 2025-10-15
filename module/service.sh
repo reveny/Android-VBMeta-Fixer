@@ -26,6 +26,10 @@ echo "vbmeta-fixer: service.sh - waiting for boot completion" >> /dev/kmsg
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 1
 done
+while [ ! -d /sdcard/Android ]; do
+    sleep 1
+done
+
 echo "vbmeta-fixer: service.sh - boot completed" >> /dev/kmsg
 update_status "Boot completed, waiting for launcher" "⏳"
 
