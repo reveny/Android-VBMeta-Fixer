@@ -36,20 +36,20 @@ while true; do
         update_status "Launcher detected (via activities)" "⏳"
         break
     fi
-    
+
     if dumpsys activity recents | grep -q "Recent #0" | grep -q -E "launcher|Launcher|lawnchair"; then
         echo "vbmeta-fixer: service.sh - launcher detected via recents" >> /dev/kmsg
         update_status "Launcher detected (via recents)" "⏳"
         break
     fi
-    
+
     launcher_counter=$((launcher_counter + 1))
     if [ $launcher_counter -gt $launcher_timeout ]; then
         echo "vbmeta-fixer: service.sh - launcher detection timed out after ${launcher_timeout}s, continuing anyway" >> /dev/kmsg
         update_status "Launcher timeout, continuing" "⚠️"
         break
     fi
-    
+
     sleep 1
     echo "vbmeta-fixer: service.sh - waiting for launcher to start (${launcher_counter}/${launcher_timeout}s)" >> /dev/kmsg
 done
@@ -88,9 +88,9 @@ while [ $counter -lt $timeout ]; do
         else
             echo "vbmeta-fixer: service.sh - hash file loaded successfully" >> /dev/kmsg
         fi
-        
+
         update_status "Setting VBMeta properties" "⏳"
-        
+
         # Set all VBMeta properties
         resetprop ro.boot.vbmeta.digest "$boot_hash"
         resetprop ro.boot.vbmeta.hash_alg "sha256"
@@ -104,7 +104,7 @@ while [ $counter -lt $timeout ]; do
 
         resetprop ro.boot.vbmeta.invalidate_on_error "yes"
         resetprop ro.boot.vbmeta.device_state "locked"
-        
+
         update_status "Service Active" "✅"
         echo "vbmeta-fixer: service.sh - service active and properties set" >> /dev/kmsg
         break
