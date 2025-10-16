@@ -15,10 +15,8 @@ update_status() {
 
 BOOT_HASH_FILE="/data/data/com.reveny.vbmetafix.service/cache/boot.hash"
 TARGET="/data/adb/tricky_store/target.txt"
-timeout=10
-counter=0
-launcher_timeout=20
-launcher_counter=0
+retry_count=10
+count=0
 
 update_status "Initializing" "⏳"
 
@@ -31,7 +29,7 @@ while [ ! -d /sdcard/Android ]; do
 done
 
 echo "vbmeta-fixer: service.sh - boot completed" >> /dev/kmsg
-update_status "Boot completed, waiting for launcher" "⏳"
+update_status "Boot completed, waiting for unlock phone" "⏳"
 
 # Wait until we are in the launcher
 while true; do
@@ -58,10 +56,10 @@ while true; do
     echo "vbmeta-fixer: service.sh - waiting for launcher to start (${launcher_counter}/${launcher_timeout}s)" >> /dev/kmsg
 done
 
-update_status "Launcher ready, stabilizing system" "⏳"
+update_status "Unlocked ready, stabilizing system" "⏳"
 sleep 10
 
-rm -rf $BOOT_HASH_FILE
+rm -f $BOOT_HASH_FILE
 update_status "Starting service" "⏳"
 
 # Add to target.txt if not already present
@@ -82,8 +80,9 @@ fi
 am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
 echo "vbmeta-fixer: service.sh - service started" >> /dev/kmsg
 update_status "Service started, waiting for hash file" "⏳"
+sleep 5
 
-while [ $counter -lt $timeout ]; do
+while [ $count -lt $retry_count ]; do
     if [ -f "$BOOT_HASH_FILE" ]; then
         boot_hash=$(cat "$BOOT_HASH_FILE")
         if [ "$boot_hash" == "null" ]; then
@@ -92,9 +91,9 @@ while [ $counter -lt $timeout ]; do
         else
             echo "vbmeta-fixer: service.sh - hash file loaded successfully" >> /dev/kmsg
         fi
-        
+
         update_status "Setting VBMeta properties" "⏳"
-        
+
         # Set all VBMeta properties
         resetprop ro.boot.vbmeta.digest "$boot_hash"
         resetprop ro.boot.vbmeta.hash_alg "sha256"
@@ -108,26 +107,22 @@ while [ $counter -lt $timeout ]; do
 
         resetprop ro.boot.vbmeta.invalidate_on_error "yes"
         resetprop ro.boot.vbmeta.device_state "locked"
-        
+
         update_status "Service Active" "✅"
         echo "vbmeta-fixer: service.sh - service active and properties set" >> /dev/kmsg
         break
     else
+        am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
+        echo "vbmeta-fixer: service.sh - restarting service ($count/$retry_count)" >> /dev/kmsg
+        count=$((count + 1))
         sleep 1
-        if [ -d "/data/data/com.reveny.vbmetafix.service/cache" ]; then
-            echo "vbmeta-fixer: service.sh - cache directory exists, restarting service" >> /dev/kmsg
-            am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
-        else
-            echo "vbmeta-fixer: service.sh - waiting for cache directory to be created ($counter/$timeout)" >> /dev/kmsg
-        fi
-        counter=$((counter + 1))
     fi
 done
 
 # Check if we timed out
-if [ $counter -ge $timeout ]; then
+if [ $count -ge $retry_count ]; then
     update_status "Failed to set VBMeta properties" "❌"
-    echo "vbmeta-fixer: service.sh - failed to reset VBMeta digest within timeout" >> /dev/kmsg
+    echo "vbmeta-fixer: service.sh - failed to reset VBMeta digest within retries count" >> /dev/kmsg
 fi
 
 echo "vbmeta-fixer: service.sh - script completed" >> /dev/kmsg
