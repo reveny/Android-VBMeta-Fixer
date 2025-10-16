@@ -36,7 +36,7 @@ done
 update_status "Unlocked ready, stabilizing system" "⏳"
 sleep 10
 
-rm -rf $BOOT_HASH_FILE
+rm -f $BOOT_HASH_FILE
 update_status "Starting service" "⏳"
 
 # Add to target.txt if not already present
