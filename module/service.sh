@@ -57,6 +57,7 @@ fi
 am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
 echo "vbmeta-fixer: service.sh - service started" >> /dev/kmsg
 update_status "Service started, waiting for hash file" "⏳"
+sleep 5
 
 while [ $count -lt $retry_count ]; do
     if [ -f "$BOOT_HASH_FILE" ]; then
