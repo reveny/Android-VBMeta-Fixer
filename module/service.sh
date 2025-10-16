@@ -89,12 +89,8 @@ while [ $count -lt $retry_count ]; do
         echo "vbmeta-fixer: service.sh - service active and properties set" >> /dev/kmsg
         break
     else
-        if [ -d "/data/data/com.reveny.vbmetafix.service/cache" ]; then
-            echo "vbmeta-fixer: service.sh - cache directory exists, restarting service" >> /dev/kmsg
-            am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
-        else
-            echo "vbmeta-fixer: service.sh - waiting for cache directory to be created ($count/$retry_count)" >> /dev/kmsg
-        fi
+        am start-foreground-service -n com.reveny.vbmetafix.service/.FixerService --user 0 </dev/null 1>/dev/null 2>&1
+        echo "vbmeta-fixer: service.sh - restarting service ($count/$retry_count)" >> /dev/kmsg
         count=$((count + 1))
         sleep 1
     fi
