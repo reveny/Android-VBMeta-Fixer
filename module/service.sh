@@ -24,13 +24,36 @@ echo "vbmeta-fixer: service.sh - waiting for boot completion" >> /dev/kmsg
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 1
 done
+while [ ! -d /sdcard/Android ]; do
+    sleep 1
+done
+
 echo "vbmeta-fixer: service.sh - boot completed" >> /dev/kmsg
 update_status "Boot completed, waiting for unlock phone" "⏳"
 
-# Wait for the device to decrypt (if it's encrypted) when phone is unlocked once.
-until [ -d "/sdcard/Android" ]; do
-    sleep 3
-    echo "vbmeta-fixer: service.sh - waiting for unlock phone" >> /dev/kmsg
+# Wait until we are in the launcher
+while true; do
+    if dumpsys activity activities | grep "mResumedActivity" | grep -qiE "launcher|lawnchair"; then
+        echo "vbmeta-fixer: service.sh - launcher detected via activities" >> /dev/kmsg
+        update_status "Launcher detected (via activities)" "⏳"
+        break
+    fi
+    
+    if dumpsys activity recents | grep "Recent #0" | grep -qiE "launcher|lawnchair"; then
+        echo "vbmeta-fixer: service.sh - launcher detected via recents" >> /dev/kmsg
+        update_status "Launcher detected (via recents)" "⏳"
+        break
+    fi
+    
+    launcher_counter=$((launcher_counter + 1))
+    if [ $launcher_counter -gt $launcher_timeout ]; then
+        echo "vbmeta-fixer: service.sh - launcher detection timed out after ${launcher_timeout}s, continuing anyway" >> /dev/kmsg
+        update_status "Launcher timeout, continuing" "⚠️"
+        break
+    fi
+    
+    sleep 1
+    echo "vbmeta-fixer: service.sh - waiting for launcher to start (${launcher_counter}/${launcher_timeout}s)" >> /dev/kmsg
 done
 
 update_status "Unlocked ready, stabilizing system" "⏳"
