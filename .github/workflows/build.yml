@@ -57,7 +57,7 @@ jobs:
         if: github.event.inputs.module == 'true'
         working-directory: module
         run: |
-          rm -f service/.gitkeep
+          rm -rf common service/.gitkeep
           zip vbmeta-fixer-${{ env.mod_version }}.zip -r *
 
       - name: Upload module
