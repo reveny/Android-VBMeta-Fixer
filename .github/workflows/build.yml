@@ -60,12 +60,12 @@ jobs:
           rm -f service/.gitkeep
           zip vbmeta-fixer-${{ env.mod_version }}.zip -r *
 
-#      - name: Upload module
-#        if: github.event.inputs.module == 'true'
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: vbmeta-fixer-${{ env.mod_version }}
-#          path: module/vbmeta-fixer-${{ env.mod_version }}.zip
+      - name: Upload module
+        if: github.event.inputs.module == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vbmeta-fixer-${{ env.mod_version }}
+          path: module/vbmeta-fixer-${{ env.mod_version }}.zip
 
       - name: Release module
         uses: softprops/action-gh-release@v2
